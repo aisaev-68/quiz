@@ -18,6 +18,7 @@ app = FastAPI(
     description="Тестовое задание.",
     version="0.1.0",
     docs_url="/api/docs",
+    redoc_url='/api/redoc',
     responses={
         422: {
             "description": "Ошибка проверки",
