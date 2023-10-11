@@ -9,7 +9,7 @@ from app.config import settings
 from app.models.database import get_db
 from app.models.models import Answer
 from app.utils.logger import get_logger
-from app.schema.schemas import QuestionAnswer
+from app.schema.schemas import QuestionAnswer, Failure
 
 logger = get_logger("crud.services")
 
@@ -44,44 +44,58 @@ class AnswerService:
                     )
                 return answer_data
 
-    async def insert_data(
-            self,
-            data: List,
-    ) -> Union[None, QuestionAnswer]:
-        """
-        Метод для записи полученных данных.
+    async def insert_data(self, data: List) -> Union[QuestionAnswer, Failure]:
+        prev_id = 0
+        prev_question_id = 0
+        try:
+            async with self.session.begin():
 
-        :param data: словарь данных ответов и вопросов.
-        :return: None или словарь.
-        """
-        prev = None
-        prev_question = None
+                for answer in data:
+                    stmt = select(Answer).where(Answer.question_id == answer['question_id'])
+                    question = await self.session.execute(stmt)
+                    item_question = question.scalars().first()
 
-        for answer in data:
-            stmt = select(Answer).where(Answer.question_id == answer['question_id'])
-            question = await self.session.execute(stmt)
-            item_question = question.scalars().first()
+                    if item_question is None:
+                        add_data = Answer(
+                            question_id=answer['question_id'],
+                            question=answer['question'],
+                            answer=answer['answer'],
+                            created_at=answer['created_at']
+                        )
+                        self.session.add(add_data)
 
-            if item_question is None:
-                add_data = Answer(
-                    question_id=answer['question_id'],
-                    question=answer['question'],
-                    answer=answer['answer'],
-                    created_at=answer['created_at']
-                )
-                self.session.add(add_data)
+                        prev_question_id = prev_id
+                        prev_id = add_data.question_id
+
                 await self.session.commit()
 
-                prev_question = prev
-                prev = QuestionAnswer(
-                    id=add_data.id,
-                    question_id=add_data.question_id,
-                    question=add_data.question,
-                    answer=add_data.answer,
-                    created_at=add_data.created_at
+            answer = select(Answer).where(Answer.question_id == prev_question_id)
+            result = await self.session.execute(answer)
+            res = result.scalars().first()
+            if res:
+                return QuestionAnswer(
+                    id=res.id,
+                    question_id=res.question_id,
+                    question=res.question,
+                    answer=res.answer,
+                    created_at=res.created_at
+                )
+            else:
+                return QuestionAnswer(
+                    id=0,
+                    question_id=0,
+                    question="На ваш вопрос?",
+                    answer="Пустой ответ",
+                    created_at=datetime.datetime.now()
                 )
 
-        return prev_question
+        except Exception as er:
+            await self.session.rollback()
+            return Failure(
+                result=False,
+                error_message=str(er),
+                error_type=type(er).__name__
+            )
 
     async def get_all_data(
             self,

@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -8,11 +8,11 @@ class Question(BaseModel):
 
 
 class QuestionAnswer(BaseModel):
-    id: int
-    question_id: int
-    question: str
-    answer: str
-    created_at: datetime.datetime
+    id: Optional[int]
+    question_id: Optional[int]
+    question: Optional[str]
+    answer: Optional[str]
+    created_at: Optional[datetime.datetime]
 
     class Config:
         from_attributes = True
@@ -32,10 +32,6 @@ class QuestionAnswer(BaseModel):
 
 class AllQuestionAnswer(BaseModel):
     questions: List[QuestionAnswer]
-
-
-class EmptyQuestion(BaseModel):
-    question: str = None
 
 
 class Failure(BaseModel):
