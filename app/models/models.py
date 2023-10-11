@@ -19,9 +19,9 @@ class Answer(Base):
     """
     __tablename__ = 'answer'
     id: int = Column(Integer, primary_key=True, index=True)
-    question_id: int = Column(Integer, unique=True)
-    question: str = Column(String(300))
-    answer: str = Column(String(200))
+    question_id: int = Column(Integer, unique=True, nullable=False)
+    question: str = Column(String(300), nullable=False)
+    answer: str = Column(String(200), nullable=False)
     created_at: datetime = Column(DateTime())
 
     def __repr__(self) -> str:
