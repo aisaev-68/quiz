@@ -1,21 +1,23 @@
 import datetime
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List, Union
+from pydantic import BaseModel, Field
 
 
 class Question(BaseModel):
-    questions_num: int
+    questions_num: int = Field(
+        description="Количество вопросов", example=5, gt=0
+    )
 
 
 class QuestionAnswer(BaseModel):
-    id: Optional[int] = None
-    question_id: Optional[int] = None
-    question: Optional[str] = None
-    answer: Optional[str] = None
-    created_at: Optional[datetime.datetime] = None
+    id: Union[int, None] = None
+    question_id: Union[int, None] = None
+    question: Union[str, None] = None
+    answer: str
+    created_at: Union[datetime.datetime, None] = None
 
     class Config:
-        from_attributes = True
+
         json_schema_extra = {
             'title': 'Answer',
             'description': 'Example answer list',

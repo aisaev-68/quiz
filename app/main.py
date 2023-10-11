@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 
 from app.api.v1.api import api_router as api_router_v1
-from app.schema.schemas import Failure, EmptyAnswer
+from app.schema.schemas import Failure
 from app.models.database import engine, Base
 from app.utils.logger import get_logger
 

@@ -30,7 +30,7 @@ router = APIRouter()
 )
 async def get_questions(
         service: Annotated[AnswerService, Depends()],
-        questions_num: Question = Body(..., example={"questions_num": 5})
+        questions_num: Question = Body(embed=False)
 ) -> Union[QuestionAnswer, Failure]:
 
     questions_num = questions_num.questions_num
