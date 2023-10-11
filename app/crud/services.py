@@ -2,6 +2,7 @@ import datetime
 from typing import Dict, List, Union
 import aiohttp
 from fastapi import Depends
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -44,44 +45,39 @@ class AnswerService:
                     )
                 return answer_data
 
-    async def insert_data(
-            self,
-            data: List,
-    ) -> Union[None, QuestionAnswer]:
-        """
-        Метод для записи полученных данных.
+    async def insert_data(self, data: List) -> Union[None, QuestionAnswer]:
+        try:
+            async with self.session.begin():
+                prev = None
+                prev_question = None
 
-        :param data: словарь данных ответов и вопросов.
-        :return: None или словарь.
-        """
-        prev = None
-        prev_question = None
+                for answer in data:
+                    stmt = select(Answer).where(Answer.question_id == answer['question_id'])
+                    question = await self.session.execute(stmt)
+                    item_question = question.scalars().first()
 
-        for answer in data:
-            stmt = select(Answer).where(Answer.question_id == answer['question_id'])
-            question = await self.session.execute(stmt)
-            item_question = question.scalars().first()
+                    if item_question is None:
+                        add_data = Answer(
+                            question_id=answer['question_id'],
+                            question=answer['question'],
+                            answer=answer['answer'],
+                            created_at=answer['created_at']
+                        )
+                        self.session.add(add_data)
 
-            if item_question is None:
-                add_data = Answer(
-                    question_id=answer['question_id'],
-                    question=answer['question'],
-                    answer=answer['answer'],
-                    created_at=answer['created_at']
-                )
-                self.session.add(add_data)
-                await self.session.commit()
+                        prev_question = prev
+                        prev = QuestionAnswer(
+                            id=add_data.id,
+                            question_id=add_data.question_id,
+                            question=add_data.question,
+                            answer=add_data.answer,
+                            created_at=add_data.created_at
+                        )
 
-                prev_question = prev
-                prev = QuestionAnswer(
-                    id=add_data.id,
-                    question_id=add_data.question_id,
-                    question=add_data.question,
-                    answer=add_data.answer,
-                    created_at=add_data.created_at
-                )
-
-        return prev_question
+                return prev_question
+        except SQLAlchemyError:
+            await self.session.rollback()
+            raise
 
     async def get_all_data(
             self,
