@@ -8,11 +8,11 @@ class Question(BaseModel):
 
 
 class QuestionAnswer(BaseModel):
-    id: Optional[int]
-    question_id: Optional[int]
-    question: Optional[str]
-    answer: Optional[str]
-    created_at: Optional[datetime.datetime]
+    id: Optional[int] = None
+    question_id: Optional[int] = None
+    question: Optional[str] = None
+    answer: Optional[str] = None
+    created_at: Optional[datetime.datetime] = None
 
     class Config:
         from_attributes = True

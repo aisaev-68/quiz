@@ -82,13 +82,8 @@ class AnswerService:
                 )
             else:
                 return QuestionAnswer(
-                    id=0,
-                    question_id=0,
-                    question="На ваш вопрос?",
                     answer="Пустой ответ",
-                    created_at=datetime.datetime.now()
                 )
-
         except Exception as er:
             await self.session.rollback()
             return Failure(

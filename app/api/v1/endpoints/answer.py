@@ -32,6 +32,7 @@ async def get_questions(
         service: Annotated[AnswerService, Depends()],
         questions_num: Question = Body(..., example={"questions_num": 5})
 ) -> Union[QuestionAnswer, Failure]:
+
     questions_num = questions_num.questions_num
     questions = await service.get_data(questions_num)
     response_data = await service.insert_data(questions)
