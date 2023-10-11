@@ -23,7 +23,7 @@ router = APIRouter()
 @router.post(
     "",
     response_model=Union[QuestionAnswer, Failure],
-    response_model_exclude_unset=True,
+    response_model_exclude_unset=True, # пустые поля в ответе исключаются
     summary="Возвращает предыдущей сохранённый вопрос для викторины.",
     description="Маршрут - возвращает предыдущей сохранённый вопрос.",
     response_description="Успешный ответ",
