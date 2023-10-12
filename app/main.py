@@ -5,12 +5,12 @@ from fastapi.templating import Jinja2Templates
 
 from app.api.v1.api import api_router as api_router_v1
 from app.schema.schemas import Failure
-from app.models.database import engine, Base
+from app.models.database import engine, Base, async_session
 from app.utils.logger import get_logger
 
 logger = get_logger("main")
 
-async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+# async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 app = FastAPI(
     title="Test task",
