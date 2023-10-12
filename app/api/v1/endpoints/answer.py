@@ -33,6 +33,7 @@ async def get_questions(
         service: Annotated[AnswerService, Depends()],
         questions_num: Question = Body(embed=False)
 ) -> QuestionAnswer | Failure:
+
     questions_num = questions_num.questions_num
     questions = await service.get_data(questions_num)
     response_data = await service.insert_data(questions)
