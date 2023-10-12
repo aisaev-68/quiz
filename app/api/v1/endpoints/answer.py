@@ -33,6 +33,12 @@ async def get_questions(
         service: Annotated[AnswerService, Depends()],
         questions_num: Question = Body(embed=False)
 ) -> QuestionAnswer | Failure:
+    """
+    Возвращает предыдущей сохранённый вопрос для викторины.
+    :param service: сервис работы с данными.
+    :param questions_num: словарь в виде запроса.
+    :return: модели QuestionAnswer или Failure.
+    """
 
     questions_num = questions_num.questions_num
     questions = await service.get_data(questions_num)
@@ -53,6 +59,12 @@ async def get_questions(
 async def get_all_questions(
         service: Annotated[AnswerService, Depends()],
 ) -> AllQuestionAnswer | Failure:
+    """
+    Возвращает все сохранённые в базе вопросы для викторины.
+    :param service: сервис работы с данными.
+    :return: модели AllQuestionAnswer или Failure.
+    """
+
     questions = await service.get_all_data()
 
     logger.info("Возвращаю все данные из базы")
