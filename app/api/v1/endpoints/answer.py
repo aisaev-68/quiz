@@ -23,7 +23,7 @@ router = APIRouter()
 @router.post(
     "",
     response_model=Union[QuestionAnswer, Failure],
-    response_model_exclude_unset=True, # пустые поля в ответе исключаются
+    response_model_exclude_unset=True,  # пустые поля в ответе исключаются
     summary="Возвращает предыдущей сохранённый вопрос для викторины.",
     description="Маршрут - возвращает предыдущей сохранённый вопрос.",
     response_description="Успешный ответ",
@@ -32,8 +32,7 @@ router = APIRouter()
 async def get_questions(
         service: Annotated[AnswerService, Depends()],
         questions_num: Question = Body(embed=False)
-) -> Union[QuestionAnswer, Failure]:
-
+) -> QuestionAnswer | Failure:
     questions_num = questions_num.questions_num
     questions = await service.get_data(questions_num)
     response_data = await service.insert_data(questions)
@@ -52,8 +51,8 @@ async def get_questions(
 )
 async def get_all_questions(
         service: Annotated[AnswerService, Depends()],
-) -> Union[AllQuestionAnswer, Failure]:
+) -> AllQuestionAnswer | Failure:
     questions = await service.get_all_data()
 
     logger.info("Возвращаю все данные из базы")
-    return AllQuestionAnswer(questions=questions)
+    return questions

@@ -9,7 +9,7 @@ from app.config import settings
 from app.models.database import get_db
 from app.models.models import Answer
 from app.utils.logger import get_logger
-from app.schema.schemas import QuestionAnswer, Failure
+from app.schema.schemas import QuestionAnswer, Failure, AllQuestionAnswer
 
 logger = get_logger("crud.services")
 
@@ -45,9 +45,10 @@ class AnswerService:
                 return answer_data
 
     async def insert_data(self, data: List) -> Union[QuestionAnswer, Failure]:
-        prev_id = 0
-        prev_question_id = 0
+
         try:
+            prev = None
+            prev_question = None
             async with self.session.begin():
 
                 for answer in data:
@@ -64,21 +65,18 @@ class AnswerService:
                         )
                         self.session.add(add_data)
 
-                        prev_question_id = prev_id
-                        prev_id = add_data.question_id
+                        prev_question = prev
+                        prev = add_data
 
                 await self.session.commit()
 
-            answer = select(Answer).where(Answer.question_id == prev_question_id)
-            result = await self.session.execute(answer)
-            res = result.scalars().first()
-            if res:
+            if prev_question:
                 return QuestionAnswer(
-                    id=res.id,
-                    question_id=res.question_id,
-                    question=res.question,
-                    answer=res.answer,
-                    created_at=res.created_at
+                    id=prev_question.id,
+                    question_id=prev_question.question_id,
+                    question=prev_question.question,
+                    answer=prev_question.answer,
+                    created_at=prev_question.created_at
                 )
             else:
                 return QuestionAnswer(
@@ -94,7 +92,7 @@ class AnswerService:
 
     async def get_all_data(
             self,
-    ) -> List[Dict[str, Union[str, int, datetime.datetime]]]:
+    ) -> AllQuestionAnswer | List:
         """
         Метод для записи полученных данных.
 
@@ -107,6 +105,6 @@ class AnswerService:
         item_question = question.all()
         data = []
         for question in item_question:
-            data.append(question[0].to_json())
+            data.append(QuestionAnswer(**question[0].to_json()))
 
-        return data
+        return AllQuestionAnswer(questions=data)

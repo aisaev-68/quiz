@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Union
+from typing import List
 from pydantic import BaseModel, Field
 
 
@@ -10,14 +10,13 @@ class Question(BaseModel):
 
 
 class QuestionAnswer(BaseModel):
-    id: Union[int, None] = None
-    question_id: Union[int, None] = None
-    question: Union[str, None] = None
+    id: int | None = None
+    question_id: int | None = None
+    question: str | None = None
     answer: str
-    created_at: Union[datetime.datetime, None] = None
+    created_at: datetime.datetime | None = None
 
     class Config:
-
         json_schema_extra = {
             'title': 'Answer',
             'description': 'Example answer list',
