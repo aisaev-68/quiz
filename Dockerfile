@@ -8,11 +8,11 @@ ARG INSTALL_ARGS="--no-root --no-dev"
 ENV POETRY_HOME="/opt/poetry"
 ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN pip install poetry
-COPY pyproject.toml poetry.lock .env ./
+COPY pyproject.toml poetry.lock .env pytest.ini ./
 
 RUN poetry config virtualenvs.create false && poetry install $INSTALL_ARGS
 
-
+COPY tests tests
 COPY entrypoint.sh /code/entrypoint.sh
 RUN chmod +x /code/entrypoint.sh
 

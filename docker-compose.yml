@@ -8,6 +8,7 @@ services:
       - postgres
     volumes:
       - ./app:/code/app
+      - ./tests:/code/tests
 #      - ./alembic:/code/alembic
     networks:
       - net

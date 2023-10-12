@@ -1,11 +1,11 @@
 import datetime
 from typing import List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class Question(BaseModel):
     questions_num: int = Field(
-        description="Количество вопросов", example=5, gt=0
+        description="Количество вопросов", examples=[5], gt=0
     )
 
 
@@ -16,19 +16,19 @@ class QuestionAnswer(BaseModel):
     answer: str
     created_at: datetime.datetime | None = None
 
-    class Config:
-        json_schema_extra = {
-            'title': 'Answer',
-            'description': 'Example answer list',
-            'example':
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
                 {
-                    'id': 13,
-                    'question_id': 1223,
-                    'question': 'David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series',
-                    'answer': 'The X-Files',
-                    'created_at': datetime.datetime(2023, 12, 30, 12, 34, 56)
+                    "id": 13,
+                    "question_id": 1223,
+                    "question": "David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series",
+                    "answer": "The X-Files",
+                    "created_at": datetime.datetime(2023, 12, 30, 12, 34, 56)
                 },
+            ]
         }
+    }
 
 
 class AllQuestionAnswer(BaseModel):
