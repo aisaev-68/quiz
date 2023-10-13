@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import Dict, Any, Union
+from typing import Dict, Any
 from sqlalchemy import DateTime
 from sqlalchemy import Column, Integer, String
 
@@ -39,7 +38,7 @@ class Answer(Base):
         #     created_at=self.created_at
         # )
 
-    def to_json(self) -> Dict[str, Union[str, int, datetime]]:
+    def to_json(self) -> Dict[str, Any]:
         """
         Возвращает данные в виде словаря.
         :return: словарь.
