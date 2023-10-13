@@ -1,17 +1,25 @@
+import datetime
 import pytest
-from sqlalchemy.sql import select
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from .conftest import async_db
+from .conftest import get_db
 from app.models.models import Answer
 
 
 @pytest.mark.asyncio
-async def test_get_data(async_db):
-    response = await async_db.session.execute(select(Answer))
-    print(response)
+async def test_add_get_data(get_db: AsyncSession):
+    add_data = Answer(
+        question_id=12345,
+        question='Test question1',
+        answer='Test answer1',
+        created_at=datetime.datetime(2023, 12, 30, 12, 34, 56)
+    )
+    get_db.add(add_data)
+    await get_db.flush()
+    await get_db.commit()
 
-    # result = response.json()
-    #
-    # assert response.status_code == 201
-    # assert 'question' in result
-    # assert 'answer' in result
+    stmt = select(Answer).where(Answer.question == "Test question1")
+    result = await get_db.execute(stmt)
+    quest = result.scalars().first()
+    assert quest.id == add_data.id

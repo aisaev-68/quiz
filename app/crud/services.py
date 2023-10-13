@@ -1,4 +1,4 @@
-#import asyncio
+# import asyncio
 import datetime
 from typing import Dict, List, Union
 import aiohttp
@@ -56,26 +56,25 @@ class AnswerService:
         try:
             prev = None
             prev_question = None
-            async with self.session.begin():
 
-                for answer in data:
-                    stmt = select(Answer).where(Answer.question_id == answer['question_id'])
-                    question = await self.session.execute(stmt)
-                    item_question = question.scalars().first()
+            for answer in data:
+                stmt = select(Answer).where(Answer.question_id == int(answer['question_id']))
+                question = await self.session.execute(stmt)
+                item_question = question.scalars().first()
 
-                    if item_question is None:
-                        add_data = Answer(
-                            question_id=answer['question_id'],
-                            question=answer['question'],
-                            answer=answer['answer'],
-                            created_at=answer['created_at']
-                        )
-                        self.session.add(add_data)
+                if item_question is None:
+                    add_data = Answer(
+                        question_id=answer['question_id'],
+                        question=answer['question'],
+                        answer=answer['answer'],
+                        created_at=answer['created_at']
+                    )
+                    self.session.add(add_data)
 
-                        prev_question = prev
-                        prev = add_data
+                    prev_question = prev
+                    prev = add_data
 
-                await self.session.commit()
+            await self.session.commit()
 
             if prev_question:
                 return QuestionAnswer(

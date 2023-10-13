@@ -1,9 +1,11 @@
 import asyncio
+from typing import AsyncGenerator
+
 import pytest_asyncio
 from httpx import AsyncClient
 
 from app.main import app
-from app.models.database import get_db
+from app.models.database import async_session
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -17,9 +19,14 @@ def event_loop():
 
 
 @pytest_asyncio.fixture(scope="session")
-async def async_db():
-    async with get_db() as db:
-        yield db
+async def get_db() -> AsyncGenerator:
+    """
+    Генерирует сессию.
+
+    :yield: AsyncGenerator
+    """
+    async with async_session() as session:
+        yield session
 
 
 @pytest_asyncio.fixture(scope="session")

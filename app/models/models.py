@@ -18,11 +18,11 @@ class Answer(Base):
         created_on (datetime): Дата создания вопроса.
     """
     __tablename__ = 'answer'
-    id: int = Column(Integer, primary_key=True, index=True)
-    question_id: int = Column(Integer, unique=True, nullable=False)
-    question: str = Column(String(300), nullable=False)
-    answer: str = Column(String(200), nullable=False)
-    created_at: datetime = Column(DateTime())
+    id = Column(Integer, primary_key=True, index=True)
+    question_id = Column(Integer, unique=True, nullable=False)
+    question = Column(String(300), nullable=False)
+    answer = Column(String(200), nullable=False)
+    created_at = Column(DateTime())
 
     def __repr__(self) -> str:
         """
