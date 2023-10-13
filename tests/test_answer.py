@@ -1,10 +1,11 @@
 import pytest
-from .conftest import client
+
+from .conftest import async_client
 
 
 @pytest.mark.asyncio
-async def test_add_question(client):
-    response = await client.post(
+async def test_add_question(async_client):
+    response = await async_client.post(
         "/api/answer",
         json={
             "questions_num": 5,
@@ -18,6 +19,6 @@ async def test_add_question(client):
 
 
 @pytest.mark.asyncio
-async def test_get_question(client):
-    response = await client.get("/api/answer/all")
+async def test_get_question(async_client):
+    response = await async_client.get("/api/answer/all")
     assert response.status_code == 200

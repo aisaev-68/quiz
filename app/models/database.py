@@ -1,6 +1,6 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base
 
 from app.config import settings
 from app.utils.logger import get_logger
@@ -11,7 +11,7 @@ Base = declarative_base()
 
 engine = create_async_engine(settings.DB_URI, echo=settings.POSTGRES_ECHO)
 
-async_session = sessionmaker(
+async_session = async_sessionmaker(
     engine,
     expire_on_commit=False,
     class_=AsyncSession,
