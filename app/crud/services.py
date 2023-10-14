@@ -76,16 +76,12 @@ class AnswerService:
                 await self.session.commit()
 
                 if prev_question:
-                    return QuestionAnswer(
-                        id=prev_question.id,
-                        question_id=prev_question.question_id,
-                        question=prev_question.question,
-                        answer=prev_question.answer,
-                        created_at=prev_question.created_at
-                    )
-                else:
-                    return QuestionAnswer()
+                    return QuestionAnswer(**prev_question.to_json())
+
+                return QuestionAnswer()
+
         except Exception as er:
+
             await self.session.rollback()
             return Failure(
                 result=False,
