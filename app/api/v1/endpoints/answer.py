@@ -1,9 +1,11 @@
 from typing import Union, Annotated
+import aiohttp
 from fastapi import (
     APIRouter,
     status,
     Depends,
     Body,
+    HTTPException,
 )
 
 from app.schema.schemas import (
@@ -40,8 +42,12 @@ async def get_questions(
     :return: модели QuestionAnswer или Failure.
     """
 
-    questions_num = questions_num.questions_num
-    questions = await service.get_data(questions_num)
+    try:
+        questions_num = questions_num.questions_num
+        questions = await service.get_data(questions_num)
+    except aiohttp.ClientConnectorError as er:
+        raise HTTPException(status_code=400, detail=f'{type(er).__name__}: {str(er)}')
+
     response_data = await service.insert_data(questions)
 
     logger.info("Возвращаю предыдущей сохранённый вопрос")

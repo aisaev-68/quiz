@@ -1,7 +1,7 @@
 import datetime
 from typing import Dict, List, Union
 import aiohttp
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -79,11 +79,7 @@ class AnswerService:
                     return QuestionAnswer()
         except Exception as er:
             await self.session.rollback()
-            return Failure(
-                result=False,
-                error_message=str(er),
-                error_type=type(er).__name__
-            )
+            raise HTTPException(status_code=400, detail=f'{type(er).__name__}: {str(er)}')
 
     async def get_all_data(
             self,
