@@ -1,4 +1,3 @@
-# import asyncio
 import datetime
 from typing import Dict, List, Union
 import aiohttp
@@ -30,7 +29,7 @@ class AnswerService:
         # start_time = datetime.datetime.now()
         url = f'{settings.URL}{count}'
 
-        async with aiohttp.ClientSession() as session:  # 282204, 882693, 621473
+        async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status != 200:
                     return []
@@ -114,49 +113,3 @@ class AnswerService:
                 data.append(QuestionAnswer(**question[0].to_json()))
 
         return AllQuestionAnswer(questions=data)
-
-    # алтернативный код по работе с запросами
-    # async def get_data(self, count: int) -> List[Dict[str, Union[str, int, datetime.datetime]]]:
-    #     """
-    #     Метод для получения вопросов и ответов.
-    #     :param count: количество вопросов.
-    #     :return: список словарей.
-    #     """
-    #     start_time = datetime.datetime.now()
-    #     url = '{setting}{count}'.format(setting=settings.URL, count=1)
-    #
-    #     async with aiohttp.ClientSession() as session: # 324843, 277126, 859827
-    #         tasks = []
-    #         for i in range(count):
-    #
-    #             task = asyncio.create_task(self.fetch_data(session, url))
-    #             tasks.append(task)
-    #
-    #         results = await asyncio.gather(*tasks)
-    #
-    #         data = []
-    #         for result in results:
-    #             json_result = result[0]
-    #             if isinstance(result, Exception):
-    #                 logger.error(f"Error: {json_result}")
-    #             else:
-    #                 data.append(json_result)
-    #         end_time = datetime.datetime.now()
-    #
-    #         print(f'TIME: {(end_time - start_time).microseconds}')
-    #
-    #         answer_data = []
-    #         for answer in data:
-    #             answer_data.append(
-    #                 {
-    #                     'question_id': answer['id'],
-    #                     'question': answer['question'],
-    #                     'answer': answer['answer'],
-    #                     'created_at': datetime.datetime.strptime(answer['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
-    #                 }
-    #             )
-    #         return answer_data
-    #
-    # async def fetch_data(self, session, url):
-    #     async with session.get(url) as response:
-    #         return await response.json()
