@@ -1,8 +1,16 @@
+from datetime import datetime
 from typing import Dict, Any
 from sqlalchemy import DateTime
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Integer, String
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 from app.models.database import Base
+
+
+
 
 
 class Answer(Base):
@@ -17,11 +25,11 @@ class Answer(Base):
         created_on (datetime): Дата создания вопроса.
     """
     __tablename__ = 'answer'
-    id = Column(Integer, primary_key=True, index=True)
-    question_id = Column(Integer, unique=True, nullable=False)
-    question = Column(String(300), nullable=False)
-    answer = Column(String(200), nullable=False)
-    created_at = Column(DateTime())
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    question_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    question: Mapped[str] = mapped_column(String(300), nullable=False)
+    answer: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime())
 
     def __repr__(self) -> str:
         """

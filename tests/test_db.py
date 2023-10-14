@@ -1,10 +1,11 @@
 import datetime
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .conftest import get_db
 from app.models.models import Answer
+from app.models.database import Base
 
 
 @pytest.mark.asyncio
@@ -23,3 +24,13 @@ async def test_add_get_data(get_db: AsyncSession):
     result = await get_db.execute(stmt)
     quest = result.scalars().first()
     assert quest.id == add_data.id
+
+
+@pytest.mark.asyncio
+async def test_drop_table(get_db: AsyncSession):
+    await get_db.execute(delete(Answer))
+    await get_db.commit()
+
+    stmt = select(Answer)
+    result = await get_db.execute(stmt)
+    assert len(result.all()) == 0

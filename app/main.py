@@ -1,16 +1,14 @@
 from fastapi import FastAPI, Request
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 
 from app.api.v1.api import api_router as api_router_v1
 from app.schema.schemas import Failure
-from app.models.database import engine, Base, async_session
+from app.models.database import engine, Base
 from app.utils.logger import get_logger
 
 logger = get_logger("main")
 
-# async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 app = FastAPI(
     title="Test task",
@@ -47,7 +45,7 @@ app.include_router(api_router_v1)
 @app.on_event("startup")
 async def start_db():
     async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.drop_all)
         logger.info("База создана")
         await conn.run_sync(Base.metadata.create_all)
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class Question(BaseModel):
     questions_num: int = Field(
-        description="Количество вопросов", examples=[5], gt=0
+        default=1, description="Количество вопросов", gt=0
     )
 
 
