@@ -10,25 +10,24 @@ class Question(BaseModel):
 
 
 class QuestionAnswer(BaseModel):
-    id: int | None = None
-    question_id: int | None = None
-    question: str | None = None
-    answer: str
-    created_at: datetime.datetime | None = None
+    model_config = ConfigDict(from_attributes=True)
 
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "id": 13,
-                    "question_id": 1223,
-                    "question": "David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series",
-                    "answer": "The X-Files",
-                    "created_at": datetime.datetime(2023, 12, 30, 12, 34, 56)
-                },
-            ]
-        }
-    }
+    id: int | None = Field(
+        default=None, json_schema_extra={'examples': [13]}
+    )
+    question_id: int | None = Field(
+        default=None, json_schema_extra={'examples': [13333]}
+    )
+    question: str | None = Field(
+        default=None, json_schema_extra={
+            'examples': ["David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series"]}
+    )
+    answer: str = Field(
+        json_schema_extra={'examples': ["The X-Files"]}
+    )
+    created_at: datetime.datetime | None = Field(
+        default=None, json_schema_extra={'examples': [datetime.datetime(2023, 12, 30, 12, 34, 56)]}
+    )
 
 
 class AllQuestionAnswer(BaseModel):
