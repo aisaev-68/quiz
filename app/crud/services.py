@@ -56,38 +56,38 @@ class AnswerService:
         try:
             prev = None
             prev_question = None
+            async with self.session.begin():
+                for answer in data:
+                    stmt = select(Answer).where(Answer.question_id == int(answer['question_id']))
+                    question = await self.session.execute(stmt)
+                    item_question = question.scalars().first()
 
-            for answer in data:
-                stmt = select(Answer).where(Answer.question_id == int(answer['question_id']))
-                question = await self.session.execute(stmt)
-                item_question = question.scalars().first()
+                    if item_question is None:
+                        add_data = Answer(
+                            question_id=answer['question_id'],
+                            question=answer['question'],
+                            answer=answer['answer'],
+                            created_at=answer['created_at']
+                        )
+                        self.session.add(add_data)
 
-                if item_question is None:
-                    add_data = Answer(
-                        question_id=answer['question_id'],
-                        question=answer['question'],
-                        answer=answer['answer'],
-                        created_at=answer['created_at']
+                        prev_question = prev
+                        prev = add_data
+
+                await self.session.commit()
+
+                if prev_question:
+                    return QuestionAnswer(
+                        id=prev_question.id,
+                        question_id=prev_question.question_id,
+                        question=prev_question.question,
+                        answer=prev_question.answer,
+                        created_at=prev_question.created_at
                     )
-                    self.session.add(add_data)
-
-                    prev_question = prev
-                    prev = add_data
-
-            await self.session.commit()
-
-            if prev_question:
-                return QuestionAnswer(
-                    id=prev_question.id,
-                    question_id=prev_question.question_id,
-                    question=prev_question.question,
-                    answer=prev_question.answer,
-                    created_at=prev_question.created_at
-                )
-            else:
-                return QuestionAnswer(
-                    answer="Пустой ответ",
-                )
+                else:
+                    return QuestionAnswer(
+                        answer="Пустой ответ",
+                    )
         except Exception as er:
             await self.session.rollback()
             return Failure(
@@ -105,13 +105,13 @@ class AnswerService:
         :param data: словарь данных ответов и вопросов.
         :return: None или словарь.
         """
-
-        stmt = select(Answer)
-        question = await self.session.execute(stmt)
-        item_question = question.all()
-        data = []
-        for question in item_question:
-            data.append(QuestionAnswer(**question[0].to_json()))
+        async with self.session.begin():
+            stmt = select(Answer)
+            question = await self.session.execute(stmt)
+            item_question = question.all()
+            data = []
+            for question in item_question:
+                data.append(QuestionAnswer(**question[0].to_json()))
 
         return AllQuestionAnswer(questions=data)
 
