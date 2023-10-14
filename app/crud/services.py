@@ -26,7 +26,7 @@ class AnswerService:
         :param count: количество вопросов.
         :return: список словарей.
         """
-        # start_time = datetime.datetime.now()
+
         url = f'{settings.URL}{count}'
 
         async with aiohttp.ClientSession() as session:
@@ -34,9 +34,6 @@ class AnswerService:
                 if response.status != 200:
                     return []
                 data = await response.json()
-
-                # end_time = datetime.datetime.now()
-                # print(f'TIME: {(end_time - start_time).microseconds}')
 
                 answer_data = []
                 for answer in data:
@@ -78,10 +75,9 @@ class AnswerService:
                 if prev_question:
                     return QuestionAnswer(**prev_question.to_json())
 
-                return QuestionAnswer()
-
+                else:
+                    return QuestionAnswer()
         except Exception as er:
-
             await self.session.rollback()
             return Failure(
                 result=False,
