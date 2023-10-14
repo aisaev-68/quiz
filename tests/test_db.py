@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .conftest import get_db
 from app.models.models import Answer
-from app.models.database import Base
 
 
 @pytest.mark.asyncio

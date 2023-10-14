@@ -2,11 +2,9 @@ from datetime import datetime
 from typing import Dict, Any
 from sqlalchemy import DateTime
 from sqlalchemy import Integer, String
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase
+
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-
 from app.models.database import Base
 
 
