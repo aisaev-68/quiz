@@ -19,14 +19,13 @@ class QuestionAnswer(BaseModel):
         default=None, json_schema_extra={'examples': [13333]}
     )
     question: str | None = Field(
-        default=None, json_schema_extra={
-            'examples': ["David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series"]}
+        default=None, json_schema_extra={'examples': ["David Duchovny & Gillian Anderson are FBI special agents Mulder & Scully on this series"]}
     )
-    answer: str = Field(
-        json_schema_extra={'examples': ["The X-Files"]}
+    answer: str | None = Field(
+        default=None, json_schema_extra={'examples': ["The X-Files"]}
     )
     created_at: datetime.datetime | None = Field(
-        default=None, json_schema_extra={'examples': [datetime.datetime(2000, 12, 30, 12, 34, 56)]}
+        default=None, json_schema_extra={'examples': ["The X-Files"]}
     )
 
 

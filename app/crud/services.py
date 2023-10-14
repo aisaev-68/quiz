@@ -84,9 +84,7 @@ class AnswerService:
                         created_at=prev_question.created_at
                     )
                 else:
-                    return QuestionAnswer(
-                        answer="Пустой ответ",
-                    )
+                    return QuestionAnswer()
         except Exception as er:
             await self.session.rollback()
             return Failure(
