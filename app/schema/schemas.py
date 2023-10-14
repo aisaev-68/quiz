@@ -26,7 +26,7 @@ class QuestionAnswer(BaseModel):
         json_schema_extra={'examples': ["The X-Files"]}
     )
     created_at: datetime.datetime | None = Field(
-        default=None, json_schema_extra={'examples': [datetime.datetime(2023, 12, 30, 12, 34, 56)]}
+        default=None, json_schema_extra={'examples': [datetime.datetime(2000, 12, 30, 12, 34, 56)]}
     )
 
 
